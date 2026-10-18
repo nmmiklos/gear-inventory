@@ -1,0 +1,13 @@
+services:
+  gear-inventory:
+    build: .
+    container_name: gear-inventory
+    restart: unless-stopped
+    environment:
+      GEAR_PASSWORD: ${GEAR_PASSWORD:?Set GEAR_PASSWORD in .env}
+      GEAR_COOKIE_SECURE: ${GEAR_COOKIE_SECURE:-false}
+      TZ: Europe/Budapest
+    ports:
+      - "${GEAR_BIND:-127.0.0.1}:${GEAR_PORT:-8187}:8080"
+    volumes:
+      - ${GEAR_DATA_PATH:-./data}:/data

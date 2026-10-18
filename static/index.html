@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#101924"><title>Gear Inventory</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<div id="login" class="login hidden">
+  <form id="loginForm" class="panel"><div class="mark">GI</div><h1>Gear Inventory</h1>
+    <p><span data-i18n="Eszközök, javítások és előzmények egy helyen.">Your equipment, repairs and history in one place.</span></p>
+    <div id="loginLanguage"></div><label><span data-i18n="Jelszó">Password</span><input name="password" type="password" autocomplete="current-password" required></label>
+    <button><span data-i18n="Belépés">Sign in</span></button><p id="loginError" class="error" role="alert"></p>
+  </form>
+</div>
+<div id="app" class="hidden">
+  <header class="app-navbar"><div class="brand"><span class="mark">GI</span><div><strong>Gear Inventory</strong><small><span data-i18n="Saját eszközpark">Personal equipment inventory</span></small></div></div>    <nav class="tabs" aria-label="Main navigation" data-i18n-aria-label="Fő nézetek">
+      <button data-view="dashboard" aria-pressed="true">Dashboard</button>
+      <button data-view="inventory" aria-pressed="false"><span data-i18n="Eszközök">Inventory</span></button>
+      <a class="csv-template" href="/api/export" download>CSV export</a>
+      <button id="csvImport" class="ghost">CSV import</button>
+    </nav>
+<div id="appLanguage"></div><button id="logout" class="ghost"><span data-i18n="Kilépés">Sign out</span></button></header>
+  <nav class="audit-dock" aria-label="Audit log" data-i18n-aria-label="Auditnapló"><button data-view="audit" aria-pressed="false"><span data-i18n="Auditnapló">Audit log</span></button></nav>
+  <main>
+
+    <section id="dashboardView">
+      <div class="headline"><div><span class="eyebrow"><span data-i18n="ÁTTEKINTÉS">OVERVIEW</span></span><h1>Dashboard</h1><p><span data-i18n="Általános információk a jelenleg rögzített eszközökről.">An overview of your recorded equipment.</span></p></div><button class="add-item"><span data-i18n="+ Új eszköz">+ Add item</span></button></div>
+      <div id="dashboardStats" class="stats dashboard-stats"></div>
+      <div class="dashboard-columns">
+        <section class="panel dashboard-panel"><h2><span data-i18n="Eszköztípusok">Device types</span></h2><p class="muted"><span data-i18n="Az összes nyilvántartott tétel kategóriánként.">All recorded items by category.</span></p><div id="categoryBreakdown"></div></section>
+        <section class="panel dashboard-panel"><h2><span data-i18n="Beszerzés módja">Acquisition method</span></h2><p class="muted"><span data-i18n="A tulajdonban lévő tételek darabszáma. Kattints a szűrt listához.">Owned items by acquisition method. Select a row to view the matching items.</span></p><div id="acquisitionBreakdown"></div></section>
+        <section class="panel dashboard-panel"><h2><span data-i18n="Legutóbbi változások">Recent changes</span></h2><p class="muted"><span data-i18n="A frissítés óta naplózott módosítások.">Recent changes recorded in the audit log.</span></p><div id="recentChanges"></div><button id="allAudit" class="ghost"><span data-i18n="Teljes auditnapló">View audit log</span></button></section>
+      </div>
+    </section>
+    <section id="inventoryView" class="hidden">
+      <div class="headline"><div><span class="eyebrow"><span data-i18n="NYILVÁNTARTÁS">INVENTORY</span></span><h1><span data-i18n="Eszközök">Inventory</span></h1><p id="resultCount" class="muted"></p></div><button class="add-item"><span data-i18n="+ Új eszköz">+ Add item</span></button></div>
+      <div class="toolbar">
+        <label class="search-label"><span data-i18n="Keresés">Search</span><input id="search" type="search" placeholder="Name, model, serial number…" data-i18n-placeholder="Név, modell, sorozatszám…"></label>
+        <label><span data-i18n="Állapot">Status</span><select id="filter"><option value="" data-i18n="Minden állapot">All statuses</option><option value="__repair" data-i18n="Hibás / javítás alatt">Faulty / under repair</option><option value="__closed" data-i18n="Eladott / elajándékozott">Sold / given away</option></select></label>
+        <label><span data-i18n="Tulajdon">Ownership</span><select id="ownership"><option value="" data-i18n="Minden tárgy">All items</option><option value="owned" data-i18n="Tulajdonban lévő">Currently owned</option></select></label>
+        <label><span data-i18n="Beszerzés">Acquisition</span><select id="acquisitionFilter"><option value="" data-i18n="Minden beszerzés">All acquisition methods</option></select></label>
+        <label><span data-i18n="Kategória">Category</span><select id="categoryFilter"><option value="" data-i18n="Minden kategória">All categories</option></select></label>
+        <label><span data-i18n="Rendezés">Sort by</span><select id="sort">
+          <option value="updated_at:desc" data-i18n="Módosítás: legújabb elöl">Updated: newest first</option><option value="updated_at:asc" data-i18n="Módosítás: legrégebbi elöl">Updated: oldest first</option>
+          <option value="created_at:desc" data-i18n="Felvitel: legújabb elöl">Created: newest first</option><option value="created_at:asc" data-i18n="Felvitel: legrégebbi elöl">Created: oldest first</option>
+          <option value="acquired:desc" data-i18n="Vásárlás: legújabb elöl">Acquired: newest first</option><option value="acquired:asc" data-i18n="Vásárlás: legrégebbi elöl">Acquired: oldest first</option>
+          <option value="name:asc" data-i18n="Név: A–Z">Name: A–Z</option><option value="name:desc" data-i18n="Név: Z–A">Name: Z–A</option><option value="price:asc" data-i18n="Ár: növekvő">Price: low to high</option><option value="price:desc" data-i18n="Ár: csökkenő">Price: high to low</option>
+        </select></label><button id="clearFilters" class="ghost"><span data-i18n="Szűrők törlése">Clear filters</span></button>
+      </div>
+      <div class="selection-bar"><label class="check-label"><input id="selectVisible" type="checkbox"><span data-i18n="Látható tételek kijelölése">Select visible items</span></label><span id="selectedCount"><span data-i18n="{n} kijelölve" data-i18n-vars='{"n":0}'>0 selected</span></span><button id="bulkEdit" disabled><span data-i18n="Közös szerkesztés">Bulk edit</span></button><button id="clearSelection" class="ghost"><span data-i18n="Kijelölés törlése">Clear selection</span></button></div>
+      <div id="items" class="grid"></div>
+    </section>
+    <section id="auditView" class="hidden">
+      <div class="headline"><div><span class="eyebrow"><span data-i18n="VÁLTOZÁSOK">CHANGES</span></span><h1><span data-i18n="Auditnapló">Audit log</span></h1><p><span data-i18n="A módosítás előtti és utáni értékek, időrendben.">Before and after values, in chronological order.</span></p></div></div>
+      <p class="muted"><span data-i18n="A napló a frissítés utáni műveleteket rögzíti. A korábbi javítási és mérési események az eszközök adatlapján találhatók.">The audit log records actions since it was introduced. Earlier repairs and measurements remain on the item details page.</span></p>
+      <div id="auditEntries"></div><button id="moreAudit" class="ghost hidden"><span data-i18n="Régebbi bejegyzések">Older entries</span></button>
+    </section>
+  </main>
+</div>
+<dialog id="dialog"><div id="modal"></div></dialog>
+<div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
+<script src="/i18n.js" defer></script><script src="/sorting.js" defer></script><script src="/app.js" defer></script>
+</body></html>

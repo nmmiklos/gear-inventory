@@ -1,0 +1,12 @@
+# Explicit application-source allowlist: never include Git history or runtime data.
+**
+!app.py
+!seed.py
+!static/
+!static/index.html
+!static/app.js
+!static/i18n.js
+!static/translations.json
+!static/catalog.json
+!static/sorting.js
+!static/style.css

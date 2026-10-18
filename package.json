@@ -1,0 +1,10 @@
+{
+  "name": "gear-inventory-tests",
+  "private": true,
+  "scripts": {
+    "test:ui": "node tests/test_ui.cjs && node tests/test_i18n.cjs"
+  },
+  "devDependencies": {
+    "playwright": "1.62.1"
+  }
+}
